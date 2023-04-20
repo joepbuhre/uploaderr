@@ -40,6 +40,7 @@ const server = new SMTPServer({
             let allowed = false;
             for (let i = 0; i < to.value.length; i++) {
                 const address = to.value[i].address || "";
+                console.log(allowedTo)
                 allowed = allowedTo.includes(address.toLowerCase()) || allowed;
             }
 
@@ -54,11 +55,10 @@ const server = new SMTPServer({
                 for (let i = 0; i < parsed.attachments.length; i++) {
                     const attach = parsed.attachments[i];
                     let filename = attach.filename;
-
                     if (filename !== undefined) {
                         saveDocument({
                             name: filename,
-                            buffer: parsed.attachments[0].content,
+                            buffer: attach.content,
                         })
                             .then((res) => {})
                             .catch((err) => {
