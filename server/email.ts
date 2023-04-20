@@ -14,11 +14,11 @@ const server = new SMTPServer({
     onMailFrom(address, session, callback) {
         logger.debug(address, `mail from:`);
         if (
-            allowedFroms.includes(address.address) &&
-            checkIP(session.remoteAddress)
+            allowedFroms.includes(address.address)
         ) {
             return callback();
         } else {
+            logger.warn(`Address "${address.address}" is not allowed to email to this address`)
             return callback(
                 new Error(
                     `Address "${address.address}" is not allowed to email to this address`
@@ -44,6 +44,7 @@ const server = new SMTPServer({
             }
 
             if (allowed === false) {
+                logger.error('Current email is allowed emailing to')
                 return callback(
                     new Error("Current email is not allowed to emailing to")
                 );
