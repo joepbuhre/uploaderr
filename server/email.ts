@@ -40,7 +40,7 @@ const server = new SMTPServer({
             let allowed = false;
             for (let i = 0; i < to.value.length; i++) {
                 const address = to.value[i].address || "";
-                allowed = allowedTo.includes(address) || allowed;
+                allowed = allowedTo.includes(address.toLowerCase()) || allowed;
             }
 
             if (allowed === false) {
@@ -88,8 +88,8 @@ export const startEmail = () => {
         process.exit(1);
     }
 
-    allowedFroms = process.env.ALLOWED_FROM.split(",");
-    allowedTo = process.env.ALLOWED_TO.split(",");
+    allowedFroms = process.env.ALLOWED_FROM.split(",").map(el => el.toLowerCase());
+    allowedTo = process.env.ALLOWED_TO.split(",").map(el => el.toLowerCase());
 
     server.listen(emailPort, () => {
         logger.info(`Started smtp server on port ${emailPort}`);
