@@ -1,0 +1,10 @@
+version: '3'
+services:
+  uploaderr:
+    container_name: uploaderr
+    image: uploaderr
+    env_file:
+      - .env
+    ports:
+      - "25:25"
+    
