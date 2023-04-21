@@ -1,28 +1,28 @@
-import express, { Request, Response, Router } from "express";
+import { json, Request, Response, Router } from "express";
 import cors from "cors";
 import { logger } from "./utils/logger";
 import document from "./routes/document";
-import { startEmail } from "./email";
-import { getSavePath } from "./utils/helpers";
+import health from "./routes/health.route";
 import { checkauth } from "./controllers/auth.controller";
+import auth from "./routes/auth.route";
 
-const app = express();
+const startApp = async (): Promise<Router> => {
+    const router = Router();
 
-const router = Router();
+    router.use(cors());
+    router.use(json());
 
-app.use(cors());
-app.use(express.json());
+    router.use("/health", health);
 
-app.use(checkauth);
+    router.use("/auth", auth);
 
-router.use("/document", document);
+    router.use(checkauth);
 
-app.use("/api", router);
+    router.use("/document", document);
 
-const startApp = () => {
-    app.listen(process.env.BACKEND_PORT || 8080, () => {
-        logger.info(`Started backend on port ${process.env.BACKEND_PORT} 🚀`);
-    });
+    router.use("/api", router);
+
+    return router;
 };
 
 export default startApp;

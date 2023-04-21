@@ -1,9 +1,9 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 
 const api = axios.create({
     baseURL: "/api",
     headers: {
-        "x-api-key": import.meta.env.VITE_PUBLIC_API_KEY,
+        "x-api-key": import.meta.env.VITE_PUBLIC_KEY,
     },
 });
 

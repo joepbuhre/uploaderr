@@ -7,9 +7,11 @@ declare global {
             ALLOWED_FROM: string;
             ALLOWED_TO: string;
             API_KEY: string;
+            VITE_PUBLIC_KEY: string;
             MODULE_EMAIL: "true" | "false";
             MODULE_FRONTEND: "true" | "false";
             MODULE_BACKEND: "true" | "false";
+            SECRET_KEY: string;
         }
     }
 }
