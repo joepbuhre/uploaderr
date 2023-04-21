@@ -7,14 +7,5 @@ export default defineConfig({
     build: {
         outDir: "../dist/frontend",
     },
-    envDir: '../',
-    server: {
-        proxy: {
-            "/api": {
-                target: "http://localhost:8080",
-                changeOrigin: true,
-                secure: false,
-            },
-        },
-    }
+    envDir: "../",
 });

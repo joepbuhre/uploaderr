@@ -127,6 +127,7 @@ const confirmUpload = () => {
 const dropzone = ref<HTMLInputElement | null>(null);
 
 onMounted(() => {
+
     const $el = document.querySelector("body");
     if ($el) {
         ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
