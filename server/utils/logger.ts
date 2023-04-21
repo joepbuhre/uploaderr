@@ -10,7 +10,7 @@ export const logger: Logger = pino({
         },
     },
     level: process.env.LOG_LEVEL || "debug",
-    name: process.env.LOGGER_NAME || 'uploaderr',
+    name: process.env.LOGGER_NAME || "uploaderr",
     redact: {
         paths: ["email", "password", "token"],
     },

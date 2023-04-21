@@ -16,7 +16,10 @@
     "build:server": "npx tsc -p ./server/tsconfig.json",
     "build:docker": "docker build -f Dockerfile.Frontend -t fridgy/frontend . && docker build -f Dockerfile.Server -t fridgy/server .",
     "prisma:deploy": "dotenv -e .env -- npx prisma migrate deploy",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint:check": "prettier --config .prettierrc --check \"./**/*.ts\"",
+    "lint:write": "prettier --config .prettierrc --write \"./**/*.ts\"",
+    "lint": "npm run lint:check && npm run lint:write"
   },
   "dependencies": {
     "@prisma/client": "^4.12.0",
@@ -50,6 +53,7 @@
     "pinia-plugin-persist": "^1.0.0",
     "pino-pretty": "^10.0.0",
     "postcss": "^8.4.21",
+    "prettier": "^2.8.7",
     "sass": "^1.61.0",
     "tailwindcss": "^3.3.1",
     "ts-node": "^10.9.1",
