@@ -6,9 +6,7 @@ import { getSavePath } from "./utils/helpers";
 import { checkIP } from "./models/auth.model";
 import { saveDocument } from "./models/document.model";
 
-let allowedFroms: Array<string>,
-    allowedIP: Array<string>,
-    allowedTo: Array<string>;
+let allowedFroms: Array<string>, allowedIP: Array<string>, allowedTo: Array<string>;
 
 const server = new SMTPServer({
     onMailFrom(address, session, callback) {
@@ -16,13 +14,9 @@ const server = new SMTPServer({
         if (allowedFroms.includes(address.address.toLowerCase())) {
             return callback();
         } else {
-            logger.warn(
-                `Address "${address.address}" is not allowed to email to this address`
-            );
+            logger.warn(`Address "${address.address}" is not allowed to email to this address`);
             return callback(
-                new Error(
-                    `Address "${address.address}" is not allowed to email to this address`
-                )
+                new Error(`Address "${address.address}" is not allowed to email to this address`)
             );
         }
     },
@@ -33,9 +27,7 @@ const server = new SMTPServer({
             if (parsed.to === undefined) {
                 return callback();
             }
-            let to: AddressObject = Array.isArray(parsed.to)
-                ? parsed.to[0]
-                : parsed.to;
+            let to: AddressObject = Array.isArray(parsed.to) ? parsed.to[0] : parsed.to;
 
             let allowed = false;
             for (let i = 0; i < to.value.length; i++) {
@@ -45,13 +37,8 @@ const server = new SMTPServer({
             }
 
             if (allowed === false) {
-                logger.error(
-                    to.value,
-                    "Current email is not allowed emailing to"
-                );
-                return callback(
-                    new Error("Current email is not allowed to emailing to")
-                );
+                logger.error(to.value, "Current email is not allowed emailing to");
+                return callback(new Error("Current email is not allowed to emailing to"));
             }
 
             if (process.env.UPLOAD_PATH) {
@@ -83,17 +70,12 @@ const server = new SMTPServer({
 export const startEmail = () => {
     let emailPort = parseInt(process.env?.EMAIL_PORT || "25");
 
-    if (
-        process.env.ALLOWED_FROM === undefined ||
-        process.env.ALLOWED_TO === undefined
-    ) {
+    if (process.env.ALLOWED_FROM === undefined || process.env.ALLOWED_TO === undefined) {
         logger.error("Env variables are not set correctly");
         process.exit(1);
     }
 
-    allowedFroms = process.env.ALLOWED_FROM.split(",").map((el) =>
-        el.toLowerCase()
-    );
+    allowedFroms = process.env.ALLOWED_FROM.split(",").map((el) => el.toLowerCase());
     allowedTo = process.env.ALLOWED_TO.split(",").map((el) => el.toLowerCase());
 
     server.listen(emailPort, () => {
