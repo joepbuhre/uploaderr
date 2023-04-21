@@ -13,12 +13,12 @@ let allowedFroms: Array<string>,
 const server = new SMTPServer({
     onMailFrom(address, session, callback) {
         logger.debug(address, `mail from:`);
-        if (
-            allowedFroms.includes(address.address.toLowerCase())
-        ) {
+        if (allowedFroms.includes(address.address.toLowerCase())) {
             return callback();
         } else {
-            logger.warn(`Address "${address.address}" is not allowed to email to this address`)
+            logger.warn(
+                `Address "${address.address}" is not allowed to email to this address`
+            );
             return callback(
                 new Error(
                     `Address "${address.address}" is not allowed to email to this address`
@@ -40,12 +40,15 @@ const server = new SMTPServer({
             let allowed = false;
             for (let i = 0; i < to.value.length; i++) {
                 const address = to.value[i].address || "";
-                console.log(allowedTo)
+                console.log(allowedTo);
                 allowed = allowedTo.includes(address.toLowerCase()) || allowed;
             }
 
             if (allowed === false) {
-                logger.error(to.value, 'Current email is not allowed emailing to')
+                logger.error(
+                    to.value,
+                    "Current email is not allowed emailing to"
+                );
                 return callback(
                     new Error("Current email is not allowed to emailing to")
                 );
@@ -88,8 +91,10 @@ export const startEmail = () => {
         process.exit(1);
     }
 
-    allowedFroms = process.env.ALLOWED_FROM.split(",").map(el => el.toLowerCase());
-    allowedTo = process.env.ALLOWED_TO.split(",").map(el => el.toLowerCase());
+    allowedFroms = process.env.ALLOWED_FROM.split(",").map((el) =>
+        el.toLowerCase()
+    );
+    allowedTo = process.env.ALLOWED_TO.split(",").map((el) => el.toLowerCase());
 
     server.listen(emailPort, () => {
         logger.info(`Started smtp server on port ${emailPort}`);

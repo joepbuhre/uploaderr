@@ -8,6 +8,6 @@ declare module "*.vue" {
 
 interface ImportMeta {
     env: {
-        BACKEND_PORT: number
+        BACKEND_PORT: number;
     };
 }
