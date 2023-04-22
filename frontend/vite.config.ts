@@ -8,4 +8,11 @@ export default defineConfig({
         outDir: "../dist/frontend",
     },
     envDir: "../",
+    server: {
+        port: 5173,
+        proxy: {
+            "/env.js": "http://localhost:5174/",
+            "/api": "http://localhost:8080",
+        },
+    },
 });

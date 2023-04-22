@@ -5,7 +5,7 @@ import { logger } from "./utils/logger";
 import startFrontend from "./frontend";
 import express, { Router } from "express";
 
-(async () => {
+(() => {
     config({
         path: "./.env",
     });
@@ -13,24 +13,18 @@ import express, { Router } from "express";
     // Check modules and start apps
     let env = process.env;
 
-    const app = express();
-    const router = Router();
-
     // Start backend
     if (env.MODULE_BACKEND === "true") {
         logger.debug("Backend module is enabled ✔️");
-        const backend = await startApp();
-
-        router.use("/api", backend);
+        startApp();
     } else {
         logger.debug("Backend is disabled");
     }
 
-    // Frontend
+    // Start Frontend
     if (env.MODULE_FRONTEND === "true") {
         logger.debug("Frontend module is enabled ✔️");
-        const frontend = await startFrontend();
-        router.use("/", frontend);
+        startFrontend();
     } else {
         logger.debug("Frontend is disabled");
     }
@@ -42,10 +36,4 @@ import express, { Router } from "express";
     } else {
         logger.debug("Email is disabled");
     }
-
-    app.use(router);
-    // Start main application
-    app.listen(process.env.APP_PORT || 8080, () => {
-        logger.info(`Started application on port ${process.env.APP_PORT} 🚀`);
-    });
 })();
