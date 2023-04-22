@@ -3,6 +3,8 @@ declare global {
         interface ProcessEnv {
             NODE_ENV: "development" | "production";
             EMAIL_PORT: string;
+            BACKEND_PORT: string;
+            FRONTEND_PORT: string;
             UPLOAD_PATH: string;
             ALLOWED_FROM: string;
             ALLOWED_TO: string;

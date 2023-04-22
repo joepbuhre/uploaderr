@@ -1,4 +1,4 @@
-import { json, Request, Response, Router } from "express";
+import express, { json, Request, Response, Router } from "express";
 import cors from "cors";
 import { logger } from "./utils/logger";
 import document from "./routes/document";
@@ -8,6 +8,7 @@ import auth from "./routes/auth.route";
 
 const startApp = async (): Promise<Router> => {
     const router = Router();
+    const app = express();
 
     router.use(cors());
     router.use(json());
@@ -20,7 +21,11 @@ const startApp = async (): Promise<Router> => {
 
     router.use("/document", document);
 
-    router.use("/api", router);
+    app.use("/api", router);
+
+    app.listen(process.env.BACKEND_PORT || 8080, () => {
+        logger.debug(`Started backend on port ${process.env.BACKEND_PORT || 8080}🚀`)
+    })
 
     return router;
 };
