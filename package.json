@@ -50,7 +50,6 @@
     "@types/smtp-server": "^3.5.7",
     "@vitejs/plugin-vue": "^4.1.0",
     "autoprefixer": "^10.4.14",
-    "express-http-proxy": "^1.6.3",
     "lucide-vue-next": "^0.137.0",
     "nodemon": "^2.0.22",
     "pinia": "^2.0.34",
