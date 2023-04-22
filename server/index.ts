@@ -36,5 +36,4 @@ import express, { Router } from "express";
     } else {
         logger.debug("Email is disabled");
     }
-
 })();

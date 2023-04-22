@@ -24,8 +24,8 @@ const startApp = async (): Promise<Router> => {
     app.use("/api", router);
 
     app.listen(process.env.BACKEND_PORT || 8080, () => {
-        logger.debug(`Started backend on port ${process.env.BACKEND_PORT || 8080}🚀`)
-    })
+        logger.debug(`Started backend on port ${process.env.BACKEND_PORT || 8080}🚀`);
+    });
 
     return router;
 };
