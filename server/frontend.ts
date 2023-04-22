@@ -16,7 +16,9 @@ const startFrontend = (): void => {
     } else {
         logger.debug('Start frontend with `npm run dev:frontend`')
     }
-    app.use(router).listen(5174)
+    app.use(router).listen(
+        process.env.FRONTEND_PORT || 5174
+    )
     
 };
 
