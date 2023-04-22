@@ -19,7 +19,6 @@ export const handleGetToken = (username: string) => {
 
 export const checkauth = (req: Request, res: Response, next: NextFunction) => {
     const key = <string>req.headers["x-api-key"];
-    logger.debug(key, "Checking auth");
 
     // TODO CHECK AUTH FLOW
     // if (key.split(" ")[0] === "Bearer") {
