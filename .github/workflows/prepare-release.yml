@@ -1,0 +1,66 @@
+name: Prepare new release
+
+on:
+  workflow_dispatch:
+    inputs:
+      serverBump:
+        description: "Bump server version"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - minor
+          - patch
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-root
+  cancel-in-progress: true
+
+jobs:
+  bump_version:
+    runs-on: ubuntu-latest
+
+    outputs:
+      VERSION: ${{ env.UPLOADERR_VERSION }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }}
+
+      - name: Bump version
+        run: .github/misc/pump-version.sh -s "${{ inputs.serverBump }}"
+
+      - name: Commit and tag
+        id: push-tag
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: Joep The Bot
+          author_email: jcbuhre@gmail.com
+          default_author: user_info 
+          message: "Version ${{ env.UPLOADERR_VERSION }}"
+          tag: ${{ env.UPLOADERR_VERSION }}
+          push: true
+
+  prepare_release:
+    runs-on: ubuntu-latest
+    needs: bump_version
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.RELEASE_TOKEN  }}
+
+      - name: Create draft release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          tag_name: ${{ needs.bump_version.outputs.VERSION }}
+          generate_release_notes: true
+          body_path: .github/misc/notes.tmpl
+          # files: |
+          #   docker/docker-compose.yml
+          #   docker/example.env
