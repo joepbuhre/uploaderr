@@ -64,6 +64,10 @@ Uploaderr also provides an API for uploading and downloading files. The followin
 
 The API requires an API key, which is set using the `API_KEY` environment variable.
 
+
+## TODO:
+- [] Make use of Resumable file uploads (https://github.com/tus/tus-js-client)
+
 ## License
 
 Uploaderr is released under the GNU AGPLv3 License. See `LICENSE` for more information.
