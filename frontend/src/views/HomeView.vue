@@ -1,27 +1,31 @@
 <template>
-    <div
-        class="bg-green-200 w-screen h-screen flex justify-center items-center"
-    >
+    <div class="bg-green-200 w-screen h-screen flex justify-center items-center">
         <div class="shadow-2xl flex">
             <div
-                class="px-20 md:h-[75vh] py-6 bg-slate-100 rounded-md flex justify-between items-center flex-col relative"
+                class="md:px-20 px-5 h-[75vh] py-6 bg-slate-100 rounded-md flex justify-between items-center flex-col relative"
             >
                 <h1 class="font-bold text-2xl">Upload bestanden hier</h1>
                 <div class="w-full h-full overflow-y-auto">
                     <div
-                    v-for="(fl, i) in files"
-                    class="border border-solid border-slate-400 rounded-md my-2 py-2 px-3 flex hover:bg-slate-200 w-full "
-                >
-                    <div class="w-full">
-                        <p class="m-0 underline">{{ fl.name }}</p>
-                        <span class="text-sm text-slate-700">{{
-                            fl.type
-                        }}</span>
+                        v-for="(fl, i) in files"
+                        class="border border-solid border-slate-400 rounded-md my-2 hover:bg-slate-200 w-full relative"
+                    >
+                       <div class="flex  py-2 px-3">
+                            <div class="w-full">
+                                <p class="m-0 underline">{{ fl.name }}</p>
+                                <span class="text-sm text-slate-700">{{ fl.type }}</span>
+                            </div>
+                            <div v-if="filesProgress?.[fl.name]" class="mr-2">
+                                {{ filesProgress[fl.name].percentage?.toFixed(2) }}%
+                            </div>
+                            <div class="w-[20px]">
+                                <button v-if="filesProgress?.[fl.name] === undefined" @click="files.splice(i, 1)"><Trash2 /></button>
+                            </div>
+                       </div>
+                        <div v-if="filesProgress?.[fl.name]" class="w-full">
+                            <div class="bg-blue-600 rounded-bl-md ease-linear duration-500" :style="{width: filesProgress[fl.name].percentage + '%'}" style="height: 10px;"></div>
+                        </div>
                     </div>
-                    <div class="w-[20px]">
-                        <button @click="files.splice(i, 1)"><Trash2 /></button>
-                    </div>
-                </div>
                 </div>
                 <div class="flex gap-5">
                     <button
@@ -40,6 +44,7 @@
                         />
                     </button>
                     <button @click="confirmUpload">Upload</button>
+                    <button @click="handleUpload">handle Tus</button>
                 </div>
             </div>
         </div>
@@ -59,12 +64,50 @@
 import { Upload, Trash2 } from "lucide-vue-next";
 import { onMounted, ref } from "vue";
 import { api } from "../utils/api";
+import * as tus from 'tus-js-client'
 
 const inputFile = ref<HTMLInputElement | null>(null);
 
 const showUpload = ref(false);
 
 const files = ref<File[]>([]);
+const filesProgress = ref<{[key: string]: {percentage?: number}} >({})
+
+const handleUpload = () => {
+    // Get the selected file from the input element
+    const file = files.value[0];
+
+    files.value.forEach(file => {
+        // Create a new tus upload
+        const upload = new tus.Upload(file, {
+            endpoint: "/api/file/create",
+            retryDelays: [0, 3000, 5000, 10000, 20000],
+            
+            metadata: {
+                filename: file.name,
+                filetype: file.type,
+            },
+            removeFingerprintOnSuccess: true,
+            headers: {
+                "x-api-key": window.VITE_PUBLIC_KEY || "",
+                "filename": file.name
+            },
+            onError: function (error) {
+                console.log("Failed because: " + error);
+            },
+            onProgress: function (bytesUploaded, bytesTotal) {
+                var percentage = ((bytesUploaded / bytesTotal) * 100)
+                filesProgress.value[file.name] = {percentage: percentage} 
+            },
+            onSuccess: function () {
+                //@ts-ignore
+                console.log("Download %s from %s", upload.file.name, upload.url);
+            },
+        });
+
+        upload.start()
+    })
+};
 
 const upload = () => {
     if (inputFile.value) {
@@ -105,7 +148,6 @@ const handleDrop = (e: DragEvent) => {
     }
 
     files.value = files.value.concat(Array.from(_files));
-
 };
 
 const confirmUpload = () => {
@@ -117,7 +159,7 @@ const confirmUpload = () => {
     api.post("/document/create", fdata)
         .then((res) => {
             console.log("success");
-            files.value = []
+            files.value = [];
         })
         .catch((err) => {
             console.log("err");
@@ -127,7 +169,6 @@ const confirmUpload = () => {
 const dropzone = ref<HTMLInputElement | null>(null);
 
 onMounted(() => {
-
     const $el = document.querySelector("body");
     if ($el) {
         ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
