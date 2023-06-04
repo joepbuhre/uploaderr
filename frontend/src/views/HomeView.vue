@@ -80,7 +80,7 @@ html {
 
 <script setup lang="ts">
 import { Upload, Trash2 } from "lucide-vue-next";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { api } from "../utils/api";
 import * as tus from "tus-js-client";
 import { PlayCircle } from "lucide-vue-next";
@@ -89,8 +89,6 @@ import { PauseCircle } from "lucide-vue-next";
 const inputFile = ref<HTMLInputElement | null>(null);
 
 const showUpload = ref(false);
-
-const filesProgress = ref<{ [key: string]: { percentage?: number } }>({});
 
 interface fileObject {
     tusUpload?: tus.Upload;
@@ -107,7 +105,7 @@ const handleUpload = () => {
         const file = fileObj.file;
 
         fileObj["tusUpload"] = new tus.Upload(file, {
-            endpoint: "/api/file/",
+            endpoint: getUploadUrl.value,
             retryDelays: [0, 3000],
 
             metadata: {
@@ -136,6 +134,14 @@ const handleUpload = () => {
         fileObj["tusUpload"].start();
     });
 };
+
+const getUploadUrl = computed(() => {
+    const url = new URL(window.location.toString())
+    url.hash = ''
+    url.pathname = '/api/file'
+    
+    return url.toString()
+})
 
 const upload = () => {
     if (inputFile.value) {
