@@ -13,7 +13,7 @@ export const tusServer = () => {
         path: './.env'
     })
     return new Server({
-        path: '/create',
+        path: '/',
         datastore: new FileStore({ directory: getSavePath('')}),
         namingFunction(req) {
             if(req.headers.filename) {
