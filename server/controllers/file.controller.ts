@@ -10,17 +10,18 @@ import { randomBytes } from "crypto";
 export const tusServer = () => {
     // TODO check to remove
     config({
-        path: './.env'
-    })
+        path: "./.env",
+    });
     return new Server({
-        path: '/',
-        datastore: new FileStore({ directory: getSavePath('')}),
+        path: "/",
+        datastore: new FileStore({ directory: getSavePath("") }),
         namingFunction(req) {
-            if(req.headers.filename) {
-                return req.headers.filename.toString()
+            if (req.headers.filename) {
+                return req.headers.filename.toString();
             } else {
-                return randomBytes(16).toString('hex').toString()
+                return randomBytes(16).toString("hex").toString();
             }
         },
-      })
-}
+        relativeLocation: true
+    });
+};
