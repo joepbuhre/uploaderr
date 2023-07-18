@@ -7,6 +7,7 @@ import health from "./routes/health.route";
 import { checkauth } from "./controllers/auth.controller";
 import auth from "./routes/auth.route";
 import { getSavePath } from "./utils/helpers";
+import location from "./routes/location.route";
 
 const startApp = async (): Promise<Router> => {
     const router = Router();
@@ -21,6 +22,8 @@ const startApp = async (): Promise<Router> => {
 
     router.use(checkauth);
 
+    router.use('/locations', location)
+    
     router.use("/document", document);
 
     router.use("/file", file);
