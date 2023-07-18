@@ -2,9 +2,67 @@
     <div class="w-screen h-screen flex justify-center items-center">
         <div class="shadow-2xl flex">
             <div
-                class="md:px-20 px-5 h-[75vh] py-6 bg-slate-100 rounded-md flex justify-between items-center flex-col relative"
+                class="md:px-20 px-5 h-[75vh] py-6 bg-slate-100 rounded-md flex justify-between items-left flex-col relative"
             >
-                <h1 class="font-bold text-2xl">Upload bestanden hier</h1>
+                <h1 class="font-bold text-xl">Upload bestanden hier</h1>
+                <div class="w-full" v-if="selectValues.length > 0">
+                    <label
+                        id="listbox-label"
+                        class="block text font-medium leading-6 text-gray-900"
+                        >Assigned to</label
+                    >
+                    <div class="relative mt-2">
+                        <button
+                            type="button"
+                            class="relative w-full cursor-default rounded-md bg-white py-1.5 px-1 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                            @click="showSelect = !showSelect"
+                        >
+                            <span class="flex items-center">
+                                <span class="ml-3 block truncate">{{selectValues[selectedValue]}}</span>
+                            </span>
+                            <span
+                                class="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2 "
+                            >
+                                <ChevronsUpDown :size="20" color="gray" />
+                            </span>
+                        </button>
+
+                        <Transition
+                            enter-from-class="opacity-0"
+                            enter-to-class="duration-300 opacity-100"
+                            
+                            leave-to-class="opacity-0"
+                            leave-active-class="duration-300"
+                        >
+                            <ul
+                                class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                                v-if="showSelect"
+                                >
+                                <li
+                                    class="text-gray-900 relative cursor-default select-none py-2 px-1 hover:bg-gray-200"
+                                    role="option"
+                                    @click="setSelectedValue(i)"
+                                    v-for="(it, i) in selectValues"
+                                    >
+                                    <div class="flex items-center">
+                                        <span class="font-normal ml-3 block truncate"
+                                            >{{it}}</span
+                                        >
+                                    </div>
+                                    
+                                    <span
+                                        class="text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4"
+                                        v-if="i === selectedValue"
+                                    >
+                                    <Check />
+                                    </span>
+                                </li>
+                                
+                                <!-- More items... -->
+                            </ul>
+                    </Transition>
+                    </div>
+                </div>
                 <div class="w-full h-full overflow-y-auto">
                     <div
                         v-for="(fl, i) in Object.values(fileUploads)"
@@ -22,10 +80,16 @@
                                 <button v-if="fl.progress === 0" @click="removeFile(fl)">
                                     <Trash2 />
                                 </button>
-                                <button @click="startUpload(fl)" v-if="fl.isUploading === false && fl.progress > 0">
+                                <button
+                                    @click="startUpload(fl)"
+                                    v-if="fl.isUploading === false && fl.progress > 0"
+                                >
                                     <PlayCircle />
                                 </button>
-                                <button @click="pauseUpload(fl)" v-if="fl.isUploading && fl.progress > 0">
+                                <button
+                                    @click="pauseUpload(fl)"
+                                    v-if="fl.isUploading && fl.progress > 0"
+                                >
                                     <PauseCircle />
                                 </button>
                             </div>
@@ -34,7 +98,7 @@
                             <div
                                 v-if="fl.progress > 0"
                                 class="bg-blue-600 rounded-bl-md ease-linear duration-500 h-full"
-                                :class="{'rounded-br-md': fl.progress === 1}"
+                                :class="{ 'rounded-br-md': fl.progress === 1 }"
                                 :style="{ width: fl.progress * 100 + '%' }"
                             ></div>
                         </div>
@@ -79,12 +143,26 @@ html {
 </style>
 
 <script setup lang="ts">
-import { Upload, Trash2 } from "lucide-vue-next";
+import { Upload, Trash2, Check, ChevronsUpDown} from "lucide-vue-next";
 import { computed, onMounted, ref } from "vue";
 import { api } from "../utils/api";
 import * as tus from "tus-js-client";
 import { PlayCircle } from "lucide-vue-next";
 import { PauseCircle } from "lucide-vue-next";
+
+// Handle selectbox
+const showSelect = ref<boolean>(false)
+const selectValues = ref<string[]>([])
+const selectedValue = ref<number>(0)
+const setSelectedValue = (i: number) => {
+    selectedValue.value = i
+    showSelect.value = false
+}
+const fetchAllUploadLocations = () => {
+    api.get('/locations').then(res => {
+        selectValues.value = res.data
+    })     
+}
 
 const inputFile = ref<HTMLInputElement | null>(null);
 
@@ -136,12 +214,12 @@ const handleUpload = () => {
 };
 
 const getUploadUrl = computed(() => {
-    const url = new URL(window.location.toString())
-    url.hash = ''
-    url.pathname = '/api/file'
-    
-    return url.toString()
-})
+    const url = new URL(window.location.toString());
+    url.hash = "";
+    url.pathname = "/api/file";
+
+    return url.toString();
+});
 
 const upload = () => {
     if (inputFile.value) {
@@ -151,17 +229,17 @@ const upload = () => {
 
 // Tus upload functions
 const startUpload = (fl: fileObject) => {
-    if(fl.tusUpload) {
-        fl.tusUpload.start()
-        fl.isUploading = true
+    if (fl.tusUpload) {
+        fl.tusUpload.start();
+        fl.isUploading = true;
     }
-}
+};
 const pauseUpload = (fl: fileObject) => {
-    if(fl.tusUpload) {
-        fl.tusUpload.abort()
-        fl.isUploading = false
+    if (fl.tusUpload) {
+        fl.tusUpload.abort();
+        fl.isUploading = false;
     }
-}
+};
 
 const preventDefaults = (e: Event) => {
     e.preventDefault();
@@ -216,6 +294,7 @@ const removeFile = (fl: fileObject) => {
 const dropzone = ref<HTMLInputElement | null>(null);
 
 onMounted(() => {
+    // Register Drag & Drop queryselector
     const $el = document.querySelector("body");
     if ($el) {
         ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
@@ -224,6 +303,9 @@ onMounted(() => {
         ["dragover"].forEach((eventName) => {
             window.addEventListener(eventName, highlight, false);
         });
-    } 
+    }
+
+    // Fetch all Uploadlocations
+    fetchAllUploadLocations()
 });
 </script>
