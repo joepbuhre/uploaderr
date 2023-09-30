@@ -4,7 +4,14 @@ Uploaderr is a web application that allows users to easily upload files and shar
 
 ## Installation
 
-To run Uploaderr, follow these steps:
+To run Uploaderr for production, follow these steps:
+
+1. Copy the docker compose file 
+2. Copy the example.env
+3. Run `docker compose up`
+4. All set!
+
+To run Uploaderr for dev environment, follow these steps:
 
 1. Clone the repository:
 
@@ -60,13 +67,13 @@ To run Uploaderr, follow these steps:
 
 Uploaderr also provides an API for uploading and downloading files. The following endpoints are available:
 
-- `POST /api/document/create`: Upload a file. The file should be sent as a multipart form data with the name `documentx`.
+- `POST /api/document/create`: Upload a file. The file should be sent as a multipart form data with the name `document`.
 
 The API requires an API key, which is set using the `API_KEY` environment variable.
 
 
 ## TODO:
-- [ ] Make use of Resumable file uploads (https://github.com/tus/tus-js-client)
+- [x] Make use of Resumable file uploads (https://github.com/tus/tus-js-client)
 
 ## License
 

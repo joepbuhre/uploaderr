@@ -2,10 +2,29 @@ version: '3'
 services:
   uploaderr:
     container_name: uploaderr
-    image: uploaderr:latest
+    image: ghcr.io/joepbuhre/uploaderr:latest
     env_file:
       - .env
     ports:
       - "25:25"
       - "8080:8080"
       - "8081:5174"
+    restart: 'unless-stopped'
+    labels:
+      - "traefik.enable=true"
+      # Networking configurations
+      - "traefik.http.routers.uploaderr-sv.rule=Host(`uploaderr.vicinusvetus.nl`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.uploaderr-sv.entrypoints=websecure"
+      - "traefik.http.routers.uploaderr-sv.tls.certresolver=acmeDns"
+      - "traefik.http.routers.uploaderr-sv.service=uploaderr-sv"
+      - "traefik.http.services.uploaderr-sv.loadbalancer.server.port=8080"
+
+      # Networking configurations
+      - "traefik.http.routers.uploaderr-fr.rule=Host(`uploaderr.vicinusvetus.nl`)"
+      - "traefik.http.routers.uploaderr-fr.entrypoints=websecure" 
+      - "traefik.http.routers.uploaderr-fr.tls.certresolver=acmeDns"
+      - "traefik.http.routers.uploaderr-fr.service=uploaderr-fr"
+      - "traefik.http.services.uploaderr-fr.loadbalancer.server.port=5174"
+
+      # Final middlewares
+      - "traefik.http.routers.uploaderr-fr.middlewares=authelia@file"
