@@ -60,7 +60,7 @@ To run Uploaderr, follow these steps:
 
 Uploaderr also provides an API for uploading and downloading files. The following endpoints are available:
 
-- `POST /api/document/create`: Upload a file. The file should be sent as a multipart form data with the name `documentx`.
+- `POST /api/document/create`: Upload a file. The file should be sent as a multipart form data with the name `document`.
 
 The API requires an API key, which is set using the `API_KEY` environment variable.
 
