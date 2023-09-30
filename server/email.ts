@@ -71,7 +71,7 @@ export const startEmail = () => {
     let emailPort = parseInt(process.env?.EMAIL_PORT || "25");
 
     if (process.env.ALLOWED_FROM === undefined || process.env.ALLOWED_TO === undefined) {
-        logger.error("Env variables are not set correctly");
+        logger.error("Env variables are not set correctly, please check 'ALLOWED_FROM' & 'ALLOWED_TO'");
         process.exit(1);
     }
 
