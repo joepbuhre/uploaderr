@@ -66,7 +66,7 @@ The API requires an API key, which is set using the `API_KEY` environment variab
 
 
 ## TODO:
-- [ ] Make use of Resumable file uploads (https://github.com/tus/tus-js-client)
+- [x] Make use of Resumable file uploads (https://github.com/tus/tus-js-client)
 
 ## License
 
