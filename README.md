@@ -4,7 +4,14 @@ Uploaderr is a web application that allows users to easily upload files and shar
 
 ## Installation
 
-To run Uploaderr, follow these steps:
+To run Uploaderr for production, follow these steps:
+
+1. Copy the docker compose file 
+2. Copy the example.env
+3. Run `docker compose up`
+4. All set!
+
+To run Uploaderr for dev environment, follow these steps:
 
 1. Clone the repository:
 
